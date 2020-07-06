@@ -1,0 +1,29 @@
+﻿@page "/"
+@using SharedValidationExample.Shared.Account
+@using Blazored.FluentValidation
+@using System.Net
+@inject HttpClient Http
+
+<EditForm Model="SignUpModel" OnValidSubmit="HandleValidSubmit">
+    <FluentValidationValidator />
+    
+    <label for="email">Your Email:</label>
+    <InputText id="email" @bind-Value="SignUpModel.Email"/>
+    <button type="submit">Register</button>
+    
+    <ValidationSummary />
+</EditForm>
+
+@code
+{
+    protected SignUp SignUpModel { get; set; } = new SignUp();
+
+    protected async Task HandleValidSubmit()
+    {
+        var result = await Http.PostAsJsonAsync("account", SignUpModel);
+        if (result.StatusCode == HttpStatusCode.BadRequest)
+        {
+            // oops, server-side validation failed
+        }
+    }
+}
